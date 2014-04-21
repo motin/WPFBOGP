@@ -89,12 +89,7 @@ class WPFBOGP {
 
 		$images = array();
 		foreach ( $matches[1] as $match ) {
-			// If the image path is relative, add the site url to the beginning
-			if ( ! preg_match( '/^https?:\/\//', $match ) ) {
-				// Remove any starting slash with ltrim() and add one to the end of site_url()
-				$match = site_url( '/' ) . ltrim( $match, '/' );
-			}
-			$images[] = $match;
+			$images[] = $this->normalize_relative_link( $match );
 		}
 
 		return $images;
@@ -266,7 +261,7 @@ class WPFBOGP {
 				// Find featured thumbnail of the current post/page
 				if ( function_exists( 'has_post_thumbnail' ) && has_post_thumbnail( $post->ID ) ) {
 					$thumbnail_src = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'large' );
-					$wpfbogp_images[] = $thumbnail_src[0]; // Add to images array
+					$wpfbogp_images[] = $this->normalize_relative_link( $thumbnail_src[0] ); // Add to images array
 				}
 
 				// Find any images in post/page content and put into current array
@@ -522,6 +517,22 @@ class WPFBOGP {
 
 		$current_url = add_query_arg( $wp->query_string, '', home_url( $wp->request ) );
 		$wp_admin_bar->add_menu( array( 'id' => 'wpfbogp_debug', 'title' => __( 'OGP Debug', 'wpfbogp' ), 'href' => 'https://developers.facebook.com/tools/debug?q='.$current_url ) );
+	}
+
+	/**
+	 * Checks for a relative link and if found, prepends the site url
+	 *
+	 * @param  string $link
+	 * @return string
+	 */
+	protected function normalize_relative_link( $link ) {
+		// If the image path is relative, add the site url to the beginning
+		if ( ! preg_match( '/^https?:\/\//', $link ) ) {
+			// Remove any starting slash with ltrim() and add one to the end of site_url()
+			$link = site_url( '/' ) . ltrim( $link, '/' );
+		}
+
+		return $link;
 	}
 
 }
