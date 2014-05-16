@@ -380,7 +380,8 @@ class WPFBOGP {
 					<?php $options = get_option( 'wpfbogp' ); ?>
 
 				<table class="form-table">
-					<? /*<tr valgin="top">
+					<?php
+					/*<tr valgin="top">
 						<td rowspan="2">
 							<p><?php _e( '', 'wpfbogp' ) ?></p>
 						</td>
